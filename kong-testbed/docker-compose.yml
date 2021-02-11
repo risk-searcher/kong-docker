@@ -1,0 +1,67 @@
+version: "3.9"  
+services:
+  database:
+    image: postgres:9.6
+    environment:
+      POSTGRES_DB: kong
+      POSTGRES_USER: kong
+      POSTGRES_PASSWORD: pass1234
+  kong:
+    image: "samngms/kong-docker:1"
+    ports:
+      - "8000:8000"
+      - "8443:8443"
+      - "8001:8001"
+      - "8444:8444"
+    environment: 
+      KONG_DATABASE: postgres # this is actually database "type"
+      KONG_PG_HOST: database
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: pass1234
+      KONG_LOG_LEVEL: debug
+      KONG_PLUGINS: "bundled,request-firewall,flexible-rate-limit" 
+      KONG_PROXY_ACCESS_LOG: /dev/stdout
+      KONG_ADMIN_ACCESS_LOG: /dev/stdout
+      KONG_PROXY_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_ERROR_LOG: /dev/stderr
+      KONG_ADMIN_LISTEN: "0.0.0.0:8001, 0.0.0.0:8444 ssl"
+    depends_on:
+      - database
+      - webserver
+  konga:
+    image: "pantsel/konga"
+    ports:
+      - "1337:1337"
+    volumes: 
+      - ./konga-conf:/konga-conf
+    environment: 
+      TOKEN_SECRET: this_is_a_random_string
+      DB_ADAPTER: postgres
+      DB_HOST: database
+      DB_DATABASE: kong
+      DB_USER: kong
+      DB_PASSWORD: pass1234
+      KONGA_HOOK_TIMEOUT: 120000
+      NO_AUTH: "true"
+      # doesn't work if I add this
+      #KONGA_SEED_KONG_NODE_DATA_SOURCE_FILE: /konga-conf/konga_seed_node 
+    depends_on:
+      - database
+      - kong
+  webserver:
+    image: "samngms/echo-server:2"
+    ports:
+      - "1234:1234"
+  # init-db:
+  #   image: kong
+  #   command: kong migrations bootstrap
+  #   environment: 
+  #     KONG_DATABASE: postgres # this is actually database "type"
+  #     KONG_PG_HOST: database 
+  #     KONG_PG_USER: kong
+  #     KONG_PG_PASSWORD: pass1234
+  #   depends_on:
+  #     - database
+  #   profiles: ["init"]
+
+  
