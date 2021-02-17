@@ -1,0 +1,76 @@
+{
+    "name": "request-firewall",
+    "config": {
+        "debug": true,
+        "err_code": 498,
+        "graphql_match": {
+            "/graphql": {
+                "nestDepth": 4,
+                "structure": {
+                  "mutation": {
+                    "createToken": {
+                        "variables": {
+                          "email": {"type": "string", "max": 20},
+                          "password": {"type": "string", "enum": ["abc","def"], "required": true}
+                        }
+                    }
+                  },
+                  "query": {
+                    "activateStatus": {
+                      "variables": {
+                        "teamId": {"type": "number", "min": 1, "max": 100}
+                      },
+                      "subfields": {
+                        "businessAccountStatus": {"subElements": []},
+                        "kycLevel": {"subElements": []}
+                      }
+                    }
+                  }  
+                }
+            }
+        },
+        "exact_match": {
+            "/path/file": {
+                "GET": {
+                    "query": {
+                        "page": {
+                            "type": "number",
+                            "min": 0,
+                            "max": 10000,
+                            "precision": 0
+                        },
+                        "size": {
+                            "type": "number",
+                            "min": 1,
+                            "max": 1000,
+                            "precision": 0
+                        }
+                    }
+                },
+                "POST": {
+                    "content_type": "application/json",
+                    "body": {
+                        "userApiId": {
+                            "type": "string",
+                            "max": 36,
+                            "match": "^[%w%-]*$"
+                        }
+                    }
+                }
+            }
+        },
+        "pattern_match": {
+            "/user/${userId}": {
+                "GET": {
+                    "path": {
+                        "userId": {
+                            "type": "string",
+                            "max": 36,
+                            "match": "^[%w%-]*$"
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

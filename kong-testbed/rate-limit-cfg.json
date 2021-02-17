@@ -1,0 +1,50 @@
+{
+    "name": "flexible-rate-limit",
+    "config": {
+        "redis_host": "redis",
+        "redis_ssl": false,
+        "redis_auth": null,
+        "redis_port": 6379,
+        "debug": true,
+        "graphql_match": {
+            "/graphql": {
+                "query": {
+                    "you": [
+                        {
+                            "redis_key": "you-${graphql.root}-${graphql.type}",
+                            "window": 5000,
+                            "limit": 5,
+                            "cost": 100 
+                        }
+                    ],
+                    "me2": [
+                        {
+                            "redis_key": "meme-${graphql.root}-${graphql.type}",
+                            "window": 5000,
+                            "limit" :5,
+                            "cost": 1
+                        }
+                    ]
+                },
+                "mutation": {
+                    "mutateMe": [
+                        {
+                            "redis_key": "${graphql.root}-${graphql.type}-${graphql.root.input.accountID}",
+                            "window": 5000,
+                            "limit": 5,
+                            "cost": 1
+                        }
+                    ],
+                    "mutaMe2": [
+                        {
+                            "redis_key": "mutaMeMe-${graphql.root}-${graphql.type}",
+                            "window": 5000,
+                            "limit": 5,
+                            "cost": 1
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

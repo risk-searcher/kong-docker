@@ -6,8 +6,13 @@ services:
       POSTGRES_DB: kong
       POSTGRES_USER: kong
       POSTGRES_PASSWORD: pass1234
+    volumes: 
+      - ./db-data:/var/lib/postgresql/data
+  redis:
+    image: redis:5.0
   kong:
-    image: "samngms/kong-docker:1"
+    # image: "samngms/kong-docker:1"
+    build: ../
     ports:
       - "8000:8000"
       - "8443:8443"
@@ -18,7 +23,7 @@ services:
       KONG_PG_HOST: database
       KONG_PG_USER: kong
       KONG_PG_PASSWORD: pass1234
-      KONG_LOG_LEVEL: debug
+      KONG_LOG_LEVEL: info
       KONG_PLUGINS: "bundled,request-firewall,flexible-rate-limit" 
       KONG_PROXY_ACCESS_LOG: /dev/stdout
       KONG_ADMIN_ACCESS_LOG: /dev/stdout
@@ -53,7 +58,7 @@ services:
     ports:
       - "1234:1234"
   # init-db:
-  #   image: kong
+  #   image: kong:2.0
   #   command: kong migrations bootstrap
   #   environment: 
   #     KONG_DATABASE: postgres # this is actually database "type"
@@ -62,6 +67,4 @@ services:
   #     KONG_PG_PASSWORD: pass1234
   #   depends_on:
   #     - database
-  #   profiles: ["init"]
-
   

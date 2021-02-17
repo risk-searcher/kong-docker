@@ -47,4 +47,18 @@ Connect your Konga to Kong by url `http://kong:8001`
 
 Run `python update_kong.py` to setup your plugins
 
+# Using a local plugin build
 
+If you want to use a locally built plugin rock file, run `pongo shell` to get into the shell and then run `luarocks make` with `--pack-binary-rock` to create a rock file based on local source files. If you run `luarocks pack/build`, it will pull source files from Github.
+
+Run the following in your plugin pongo
+
+```
+$ KONG_VERSION=2.0.x <path>/kong-pongo/pongo.sh shell
+# inside plugin dockre
+$ luarocks make --pack-binary-rock <name>.rockspec 
+```
+
+Once you have the rock file, you can then customize the Dockerfile to run `luarocks` to install the local rock file instead of pulling it from luarocks.
+
+You will also need to customize the `docker-compose.yml`, changing the `kong` service from `image` to `build`.
