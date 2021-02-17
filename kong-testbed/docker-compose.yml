@@ -11,8 +11,8 @@ services:
   redis:
     image: redis:5.0
   kong:
-    # image: "samngms/kong-docker:1"
-    build: ../
+    image: "samngms/kong-docker:2"
+    # build: ../
     ports:
       - "8000:8000"
       - "8443:8443"
