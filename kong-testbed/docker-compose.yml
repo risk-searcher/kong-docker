@@ -57,14 +57,14 @@ services:
     image: "samngms/echo-server:2"
     ports:
       - "1234:1234"
-  # init-db:
-  #   image: kong:2.0
-  #   command: kong migrations bootstrap
-  #   environment: 
-  #     KONG_DATABASE: postgres # this is actually database "type"
-  #     KONG_PG_HOST: database 
-  #     KONG_PG_USER: kong
-  #     KONG_PG_PASSWORD: pass1234
-  #   depends_on:
-  #     - database
+  init-db:
+    image: kong:2.0
+    command: bash -c "sleep 10 && kong migrations bootstrap"
+    environment: 
+      KONG_DATABASE: postgres # this is actually database "type"
+      KONG_PG_HOST: database 
+      KONG_PG_USER: kong
+      KONG_PG_PASSWORD: pass1234
+    depends_on:
+      - database
   
